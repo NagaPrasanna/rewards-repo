@@ -20,40 +20,31 @@ function App() {
 
   const userSelect = (value) => {
     setSelectedUser(value);
-    let selectedUserData = loadData[value];
-
-    let monthTot = {
-      1: {
-        amountSpent: [],
-        rewards: 0,},
-      2: {
-        amountSpent: [],
-        rewards: 0,
-      },
-      3: {
-        amountSpent: [],
-        rewards: 0,
-      },
+    const selectedUserData = loadData[value];
+  
+    const monthTot = {
+      1: { amountSpent: [], rewards: 0 },
+      2: { amountSpent: [], rewards: 0 },
+      3: { amountSpent: [], rewards: 0 },
     };
-    for (let i = 0; i < selectedUserData.length; i++) {
-      let month = new Date(selectedUserData[i]['date']);
-      if (month.getMonth() + 1 == 1 || month.getMonth() + 1 == 2 || month.getMonth() + 1 == 3) {
-        monthTot[month.getMonth() + 1]['amountSpent'].push(selectedUserData[i]['amount']);
+  
+    selectedUserData.forEach((transaction) => {
+      const month = new Date(transaction.date).getMonth() + 1;
+      if (month <= 3) {
+        monthTot[month].amountSpent.push(transaction.amount);
       }
-    }
+    });
+  
     for (let key in monthTot) {
-      let total_month_rewards = 0;
-      for (let i = 0; i < monthTot[key]['amountSpent'].length; i++) {
-        let price = monthTot[key]['amountSpent'][i];
-
-        total_month_rewards = total_month_rewards + reward(price);
-      }
-      monthTot[key]['rewards'] = total_month_rewards;
+      const total_month_rewards = monthTot[key].amountSpent.reduce((acc, price) => acc + reward(price), 0);
+      monthTot[key].rewards = total_month_rewards;
     }
-    console.log(monthTot)
+  
+    console.log(monthTot);
     setRewardCal({ ...monthTot });
     setMonthlyTrans([...selectedUserData]);
   };
+  
 
   return (
    
@@ -134,13 +125,6 @@ function App() {
 export default App;
 
 function reward(price) {
-  let rewardPoints = 0;
-  if (price > 100) {
-    rewardPoints = (price - 100) * 1;
-  }
-  if (price > 50) {
-    rewardPoints = rewardPoints + (price - 50);
-  }
+  const rewardPoints = price > 100 ? (price - 100) * 1 +  (price - 50) * 1 : (price > 50 ? (price - 50)*1 : 0) ;
   return rewardPoints;
-
 }

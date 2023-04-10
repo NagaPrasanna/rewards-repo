@@ -2,7 +2,7 @@ module.exports = {
   James: [
     {
       date: "1/1/2020",
-      amount: 140
+      amount: 120
     },
     {
       date: "2/1/2020",
